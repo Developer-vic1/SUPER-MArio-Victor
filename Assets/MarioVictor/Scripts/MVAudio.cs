@@ -6,6 +6,12 @@ public sealed class MVAudio : MonoBehaviour
     private AudioSource music;
     private AudioSource effects;
     private string currentSong = "";
+    public static bool MusicEnabled => PlayerPrefs.GetInt("MV.Music", 1) == 1;
+    public static void SetMusicEnabled(bool enabled)
+    {
+        PlayerPrefs.SetInt("MV.Music", enabled ? 1 : 0);
+        Get().music.mute = !enabled;
+    }
 
     private static MVAudio Get()
     {
@@ -24,6 +30,7 @@ public sealed class MVAudio : MonoBehaviour
         music.loop = true;
         music.volume = 0.42f;
         music.playOnAwake = false;
+        music.mute = !MusicEnabled;
         effects = gameObject.AddComponent<AudioSource>();
         effects.volume = 0.7f;
         effects.playOnAwake = false;
