@@ -33,6 +33,7 @@ public sealed class FinalVictoryScene : MonoBehaviour
         music.loop = false;
         music.spatialBlend = 0f;
         music.volume = 0.45f;
+        music.mute = !MVAudio.MusicEnabled;
         AudioClip chime = Resources.Load<AudioClip>("MarioVictor/Audio/mario-bros-vida");
         if (chime != null) music.PlayOneShot(chime, 0.85f);
         yield return new WaitForSecondsRealtime(chime == null ? 0.3f : Mathf.Max(0.5f, chime.length));

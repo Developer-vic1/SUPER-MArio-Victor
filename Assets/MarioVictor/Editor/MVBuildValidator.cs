@@ -18,17 +18,25 @@ public static class MVBuildValidator
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode)
             throw new Exception("Sal de modo Play antes de reconstruir escenas.");
-        if (!EditorApplication.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+        if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
         List<EditorBuildSettingsScene> targetScenes = new List<EditorBuildSettingsScene>();
         for (int i=0;i<Names.Length;i++)
         {
+            string file = i == 1 ? "Assets/Scenes/1-1.unity" : Prefix + Names[i] + ".unity";
+            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(file) != null)
+            {
+                targetScenes.Add(new EditorBuildSettingsScene(file, true));
+                continue;
+            }
+            if (i == 1) throw new Exception("Falta el nivel original completo: " + file);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var root = new GameObject("MV_SceneRoot_" + Names[i]);
             root.AddComponent<MVSceneEntry>().stageId = i;
-            string file = Prefix + Names[i] + ".unity";
             if (!EditorSceneManager.SaveScene(scene,file)) throw new Exception("No se pudo guardar escena: " + file);
             targetScenes.Add(new EditorBuildSettingsScene(file,true));
         }
+        foreach (var extra in new[] { "Assets/Scenes/VictoriaFinal.unity", "Assets/Scenes/CastilloFinal_Prototipo.unity" })
+            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(extra) != null) targetScenes.Add(new EditorBuildSettingsScene(extra, true));
         EditorBuildSettings.scenes = targetScenes.ToArray();
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -53,7 +61,7 @@ public static class MVBuildValidator
         foreach (var item in EditorBuildSettings.scenes) if (item.enabled) enabled.Add(item.path);
         for (int i=0;i<Names.Length;i++)
         {
-            string p = Prefix + Names[i] + ".unity";
+            string p = i == 1 ? "Assets/Scenes/1-1.unity" : Prefix + Names[i] + ".unity";
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(p) == null) faults.Add("Escena ausente: " + p);
             if (!enabled.Contains(p)) faults.Add("Escena deshabilitada o ausente de Build Profiles: " + p);
         }
@@ -69,10 +77,10 @@ public static class MVBuildValidator
     public static void VerifyAndBuild()
     {
         Validate();
-        string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "Builds");
+        string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "Builds", "Windows64");
         Directory.CreateDirectory(outputFolder);
         List<string> scenes = new List<string>();
-        foreach (var item in EditorBuildSettings.scenes) if (item.enabled && item.path.StartsWith(Prefix)) scenes.Add(item.path);
+        foreach (var item in EditorBuildSettings.scenes) if (item.enabled) scenes.Add(item.path);
         var opts = new BuildPlayerOptions();
         opts.scenes = scenes.ToArray();
         opts.locationPathName = Path.Combine(outputFolder, "SuperMarioVictor.exe");

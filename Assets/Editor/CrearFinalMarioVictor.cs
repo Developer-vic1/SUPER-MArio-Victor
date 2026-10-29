@@ -25,6 +25,13 @@ public static class CrearFinalMarioVictor
         }
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
+        GenerateForIntegration();
+        EditorUtility.DisplayDialog("Mario Victor", "Final original generado. Las escenas existentes se conservan.", "Perfecto");
+    }
+
+    public static void GenerateForIntegration()
+    {
+
         if (!AssetDatabase.IsValidFolder("Assets/Scenes"))
             AssetDatabase.CreateFolder("Assets", "Scenes");
 
@@ -42,10 +49,6 @@ public static class CrearFinalMarioVictor
         RegisterInBuild(DemoPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        EditorUtility.DisplayDialog("Mario Victor",
-            "Final original generado. Abre Assets/Scenes/CastilloFinal_Prototipo.unity y presiona Play.\n" +
-            "Control: flechas / A-D + espacio. Busca los 3 sellos.\n" +
-            "La escena de prueba NO reemplaza el castillo 8-4 definitivo.", "Perfecto");
     }
 
     private static void CreateVictoryScene()

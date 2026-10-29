@@ -30,9 +30,10 @@ public sealed class FinalDemoPlayer : MonoBehaviour
     private void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
-        var hit = Physics2D.Raycast((Vector2)transform.position + Vector2.down * 0.36f,
-            Vector2.down, 0.19f, Physics2D.DefaultRaycastLayers);
-        grounded = hit.collider != null && hit.collider.gameObject != gameObject && !hit.collider.isTrigger;
+        var bounds = GetComponent<Collider2D>().bounds;
+        grounded = false;
+        foreach (var hit in Physics2D.OverlapBoxAll(new Vector2(bounds.center.x, bounds.min.y - .04f), new Vector2(bounds.size.x * .8f, .1f), 0))
+            if (hit.gameObject != gameObject && !hit.isTrigger) { grounded = true; break; }
         if (grounded && Input.GetButtonDown("Jump")) jumpQueued = true;
 
         if (horizontal > 0.01f) transform.rotation = Quaternion.identity;

@@ -10,6 +10,8 @@ using UnityEngine.SceneManagement;
 public sealed class MVGameController : MonoBehaviour
 {
     public int stageId;
+    public bool authoredLevel;
+    public Player legacyHero { get; private set; }
     public MVHero hero { get; private set; }
     public bool paused { get; private set; }
     public int seals { get; private set; }
@@ -28,12 +30,13 @@ public sealed class MVGameController : MonoBehaviour
     private Texture2D solidTexture;
     private Sprite[] runAnim;
     private float ambientTimer;
+    private float constructionOffset;
 
     private static int lives = 3;
     private static int coins;
     private static int score;
     private static bool initialized;
-    private static readonly string[] stageScene = { "MV_Menu", "MV_1-1", "MV_1-2", "MV_2-2", "MV_8-4", "MV_GameOver", "MV_Victoria" };
+    private static readonly string[] stageScene = { "MV_Menu", "1-1", "MV_1-2", "MV_2-2", "MV_8-4", "MV_GameOver", "MV_Victoria" };
     private static readonly string[] stageName = { "MENU", "MUNDO 1-1", "MUNDO 1-2", "MUNDO 2-2", "MUNDO 8-4", "GAME OVER", "VICTORIA" };
 
     public static Sprite Sprite(string spriteName) { return Resources.Load<Sprite>("MarioVictor/Sprites/" + spriteName); }
@@ -42,14 +45,20 @@ public sealed class MVGameController : MonoBehaviour
     {
         Time.timeScale = 1f;
         if (!initialized) { lives = 3; coins = 0; score = 0; initialized = true; }
-        SetupCamera();
-        if (stageId == 0) { MVAudio.Music("super-mario-bros"); SceneBackdrop(new Color(.09f,.13f,.26f)); MenuDecor(); }
+        if (authoredLevel) cam = Camera.main;
+        else SetupCamera();
+        if (stageId == 0) { MVAudio.Music("super-mario-bros"); SceneBackdrop(new Color(.035f,.075f,.15f)); gameObject.AddComponent<MVMenuScreen>().game = this; }
         else if (stageId == 5) { MVAudio.StopMusic(); MVAudio.OneShot("mario-bros-game-over-1"); SceneBackdrop(new Color(.12f,.07f,.13f)); }
         else if (stageId == 6) { SceneBackdrop(new Color(.16f,.29f,.41f)); VictoryDecor(); gameObject.AddComponent<FinalVictoryScene>().campaignMode = true; }
         else
         {
-            timeLeft = stageId == 4 ? 380f : 320f;
-            BuildStage();
+            timeLeft = stageId == 4 ? 720f : 600f;
+            if (authoredLevel)
+            {
+                legacyHero = FindFirstObjectByType<Player>();
+                MVAudio.Music("super-mario-bros");
+            }
+            else BuildStage();
         }
     }
 
@@ -78,6 +87,7 @@ public sealed class MVGameController : MonoBehaviour
         if (paused || exiting) return;
         timeLeft -= Time.deltaTime;
         if (timeLeft <= 0f && hero != null) hero.Hit();
+        if (timeLeft <= 0f && legacyHero != null && !legacyHero.dead) legacyHero.Death();
         if (hero == null) return;
         float halfWidth = cam.orthographicSize * cam.aspect;
         float desiredX = Mathf.Clamp(hero.transform.position.x + 2.4f, Mathf.Min(halfWidth, worldWidth / 2f), Mathf.Max(halfWidth, worldWidth - halfWidth));
@@ -103,7 +113,7 @@ public sealed class MVGameController : MonoBehaviour
     }
     private static void Load(int sceneId)
     {
-        SceneManager.LoadScene("Assets/MarioVictor/Scenes/" + stageScene[Mathf.Clamp(sceneId, 0, stageScene.Length-1)]);
+        SceneManager.LoadScene(stageScene[Mathf.Clamp(sceneId, 0, stageScene.Length-1)]);
     }
 
     public void AddScore(int points) { score += points; }
@@ -168,7 +178,7 @@ public sealed class MVGameController : MonoBehaviour
     private GameObject Visual(string name, string spriteName, float x, float y, float scale = 1f, Color? tint = null, int order = 0)
     {
         GameObject o = new GameObject(name);
-        o.transform.position = new Vector3(x, y, 0);
+        o.transform.position = new Vector3(x + constructionOffset, y, 0);
         o.transform.localScale = new Vector3(scale, scale, 1);
         SpriteRenderer r = o.AddComponent<SpriteRenderer>();
         r.sprite = Sprite(spriteName);
@@ -191,6 +201,8 @@ public sealed class MVGameController : MonoBehaviour
     }
     private bool IsHole(int x)
     {
+        if (stageId == 2) x %= 65;
+        if (stageId == 4) x %= 56;
         if (stageId == 1) return (x >= 18 && x <= 20) || (x >= 39 && x <= 40);
         if (stageId == 2) return (x >= 18 && x <= 20) || (x >= 40 && x <= 42);
         if (stageId == 4) return (x >= 16 && x <= 18) || (x >= 32 && x <= 35) || (x >= 47 && x <= 50);
@@ -199,7 +211,7 @@ public sealed class MVGameController : MonoBehaviour
     private void BuildStage()
     {
         bool water = stageId == 3;
-        worldWidth = stageId == 4 ? 78f : (water ? 69f : 65f);
+        worldWidth = stageId == 4 ? 190f : (water ? 207f : stageId == 2 ? 195f : 65f);
         Color bg = stageId == 1 ? new Color(.34f,.66f,.95f) : stageId == 2 ? new Color(.045f,.065f,.19f) : water ? new Color(.045f,.23f,.48f) : new Color(.12f,.07f,.19f);
         SceneBackdrop(bg);
         MVAudio.Music(stageId == 1 ? "super-mario-bros" : stageId == 2 ? "mario-bros-1" : water ? "super-mario-bros" : "super-mario-bros-castillo");
@@ -218,8 +230,15 @@ public sealed class MVGameController : MonoBehaviour
             }
         }
         if (stageId == 1) BuildOverworld();
-        else if (stageId == 2) BuildUnderground();
-        else if (stageId == 3) BuildUnderwater();
+        else if (stageId == 2 || stageId == 3)
+        {
+            for (int section = 0; section < 3; section++)
+            {
+                constructionOffset = section * (water ? 69 : 65);
+                if (water) BuildUnderwater(); else BuildUnderground();
+            }
+            constructionOffset = 0;
+        }
         else BuildCastle();
         hero = CreateHero(water);
         if (stageId == 4)
@@ -270,7 +289,7 @@ public sealed class MVGameController : MonoBehaviour
     {
         var o = Visual("Enemigo " + sprite, sprite, x, y, aquatic ? 1.05f : 1.1f, null, 7);
         var c = o.AddComponent<BoxCollider2D>(); c.size = new Vector2(.8f,.75f); c.isTrigger = true;
-        var enemy = o.AddComponent<MVEnemy>(); enemy.game = this; enemy.aquatic = aquatic; enemy.originX = x; enemy.distance = span; enemy.velocity = .8f + (x % 3) * .2f;
+        var enemy = o.AddComponent<MVEnemy>(); enemy.game = this; enemy.aquatic = aquatic; enemy.originX = x + constructionOffset; enemy.distance = span; enemy.velocity = .8f + (x % 3) * .2f;
     }
     private void Pipe(float x, int height, bool purple = false)
     {
@@ -334,11 +353,22 @@ public sealed class MVGameController : MonoBehaviour
         Platform(29,31,1.35f,"RocaOscura"); Platform(36,42,.2f,"RocaOscura");
         Platform(52,58,.7f,"RocaOscura");
         for (int n=0;n<5;n++) { Solid("RocaOscura",66+n,-2 + n); }
-        Pick("SelloEstelar",11,1.7f,2); Pick("SelloEstelar",24,2.1f,2); Pick("SelloEstelar",42,1.8f,2);
+        Pick("SelloEstelar",11,1.7f,2);
+        for (int section = 1; section < 3; section++)
+        {
+            constructionOffset = section * 56;
+            BackdropDecor(2,56,4,"RocaOscura",4.25f,1.7f,new Color(.6f,.55f,.85f));
+            Platform(8,14,0,"RocaOscura"); Platform(20,25,.5f,"RocaOscura");
+            Platform(29,31,1.35f,"RocaOscura"); Platform(36,42,.2f,"RocaOscura");
+            Pick("SelloEstelar",24,2.1f,2);
+            Coins(6,7,2.4f); Coins(26,9,2.9f);
+            Enemy("Goomba_Walk1",22,-1.7f); Enemy("Koopa_Walk1",41,-1.7f);
+        }
+        constructionOffset = 0;
         Coins(6,7,2.4f); Coins(26,9,2.9f); Coins(48,7,2.8f);
         Enemy("Goomba_Walk1",22,-1.7f); Enemy("Koopa_Walk1",41,-1.7f);
         Pick("1upMushroom",52,2.5f,1);
-        var bossObj = Visual("GUARDIAN DE LAS CENIZAS - jefe final", "BowserSombra",62f,-1.30f,2.3f,null,10);
+        var bossObj = Visual("GUARDIAN DE LAS CENIZAS - jefe final", "BowserSombra",174f,-1.30f,2.3f,null,10);
         BoxCollider2D bossCol = bossObj.AddComponent<BoxCollider2D>(); bossCol.isTrigger = true; bossCol.size = new Vector2(.8f,.75f);
         MVBoss boss = bossObj.AddComponent<MVBoss>(); boss.game = this;
     }
@@ -395,7 +425,7 @@ public sealed class MVGameController : MonoBehaviour
 
     private void OnGUI()
     {
-        if (stageId == 6) return; // FinalVictoryScene presenta el cierre del segundo paquete.
+        if (stageId == 0 || stageId == 6) return; // Pantallas con Canvas y navegación de teclado.
         float sx = Screen.width / 1280f, sy = Screen.height / 720f;
         float factor = Mathf.Max(.01f, Mathf.Min(sx,sy));
         Vector3 offset = new Vector3((Screen.width-1280*factor)/2f,(Screen.height-720*factor)/2f,0);

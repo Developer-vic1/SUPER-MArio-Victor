@@ -6,8 +6,26 @@ using UnityEngine.InputSystem;
 /// <summary>Adapta controles al Input Manager clásico o Input System en Unity 6.</summary>
 public static class MVKeys
 {
+    public static float Horizontal()
+    {
+#if UNITY_EDITOR
+        if (TestHeld != null) return (TestHeld(KeyCode.D) ? 1 : 0) - (TestHeld(KeyCode.A) ? 1 : 0);
+#endif
+#if ENABLE_LEGACY_INPUT_MANAGER
+        return Input.GetAxis("Horizontal");
+#else
+        return (Held(KeyCode.D) || Held(KeyCode.RightArrow) ? 1 : 0) - (Held(KeyCode.A) || Held(KeyCode.LeftArrow) ? 1 : 0);
+#endif
+    }
+#if UNITY_EDITOR
+    public static System.Func<KeyCode, bool> TestHeld;
+    public static System.Func<KeyCode, bool> TestPressed;
+#endif
     public static bool Held(KeyCode key)
     {
+#if UNITY_EDITOR
+        if (TestHeld != null) return TestHeld(key);
+#endif
 #if ENABLE_LEGACY_INPUT_MANAGER
         return Input.GetKey(key);
 #elif ENABLE_INPUT_SYSTEM
@@ -20,6 +38,9 @@ public static class MVKeys
 
     public static bool Pressed(KeyCode key)
     {
+#if UNITY_EDITOR
+        if (TestPressed != null) return TestPressed(key);
+#endif
 #if ENABLE_LEGACY_INPUT_MANAGER
         return Input.GetKeyDown(key);
 #elif ENABLE_INPUT_SYSTEM

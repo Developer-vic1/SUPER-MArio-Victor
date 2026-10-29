@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public int stage { get; private set; }
     public int lives { get; private set; }
     public int coins { get; private set; }
+    private MVGameController Campaign => FindFirstObjectByType<MVGameController>();
 
     private void Awake()
     {
@@ -30,12 +31,13 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Application.targetFrameRate = 60;
-
+        if (Campaign != null) return;
         NewGame();
     }
 
     public void NewGame()
     {
+        if (Campaign != null) { Campaign.StartNewGame(); return; }
         lives = 3;
         coins = 0;
 
@@ -51,6 +53,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel(int world, int stage)
     {
+        if (Campaign != null) { Campaign.FinishLevel(); return; }
         this.world = world;
         this.stage = stage;
 
@@ -70,6 +73,7 @@ public class GameManager : MonoBehaviour
 
     public void ResetLevel()
     {
+        if (Campaign != null) { Campaign.LoseLife(); return; }
         lives--;
 
         if (lives > 0) {
@@ -81,6 +85,7 @@ public class GameManager : MonoBehaviour
 
     public void AddCoin()
     {
+        if (Campaign != null) { Campaign.Coin(); return; }
         coins++;
 
         if (coins == 100)
@@ -92,6 +97,7 @@ public class GameManager : MonoBehaviour
 
     public void AddLife()
     {
+        if (Campaign != null) { Campaign.ExtraLife(); return; }
         lives++;
     }
 

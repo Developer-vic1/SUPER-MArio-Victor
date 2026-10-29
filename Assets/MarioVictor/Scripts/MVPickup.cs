@@ -11,7 +11,7 @@ public sealed class MVPickup : MonoBehaviour
     {
         if (game == null || game.paused) return;
         transform.position = new Vector3(transform.position.x, bornY + .12f * Mathf.Sin(Time.time * 4f + transform.position.x), 0);
-        transform.Rotate(0, 65f * Time.deltaTime, 0);
+        transform.rotation = Quaternion.Euler(0, 0, 8f * Mathf.Sin(Time.time * 2f));
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
