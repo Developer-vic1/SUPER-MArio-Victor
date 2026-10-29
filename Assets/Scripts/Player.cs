@@ -35,6 +35,7 @@ public class Player : MonoBehaviour
 
     public void Death()
     {
+        if (dead) return;
         smallRenderer.enabled = false;
         bigRenderer.enabled = false;
         deathAnimation.enabled = true;

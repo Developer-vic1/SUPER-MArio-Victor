@@ -9,6 +9,12 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/MarioVictor_VALIDACION.txt
+/MarioVictor_BUILD_RESULTADO.txt
+/Assets/Resources/PerformanceTestRun*.json
+/Assets/Resources/PerformanceTestRun*.json.meta
+# The root Resources directory is created temporarily by the performance test package.
+/Assets/Resources.meta
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

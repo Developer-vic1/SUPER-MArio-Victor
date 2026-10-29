@@ -6,6 +6,31 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/MarioVictor/Scenes/MV_Menu.unity
+    guid: 3ff90acead0a4d378af0fb04dbf811d3
+  - enabled: 1
     path: Assets/Scenes/1-1.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/MarioVictor/Scenes/MV_1-2.unity
+    guid: 2a9775884bbd49f1aa728a5acb6a811d
+  - enabled: 1
+    path: Assets/MarioVictor/Scenes/MV_2-2.unity
+    guid: f7d29e3860d34d3c8c26f035154247aa
+  - enabled: 1
+    path: Assets/MarioVictor/Scenes/MV_8-4.unity
+    guid: b8212dd2e24c4bf78e3f539a3cbf8703
+  - enabled: 1
+    path: Assets/MarioVictor/Scenes/MV_GameOver.unity
+    guid: e5ecd5bbd096407bae0e8b6a97d4377c
+  - enabled: 1
+    path: Assets/MarioVictor/Scenes/MV_Victoria.unity
+    guid: 7e962e5235d54e0388cbcf5ff7a4ab34
+  - enabled: 1
+    path: Assets/Scenes/VictoriaFinal.unity
+    guid: 8e7e79e5197a9d844b40ef892643866c
+  - enabled: 1
+    path: Assets/Scenes/CastilloFinal_Prototipo.unity
+    guid: 5649722aa9556684c839086cea928151
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

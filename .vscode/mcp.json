@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "unity": {
+      "type": "stdio",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/Tools/MCP/Start-MarioMcp.ps1"
+      ]
+    }
+  }
+}

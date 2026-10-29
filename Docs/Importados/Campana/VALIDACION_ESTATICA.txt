@@ -1,0 +1,9 @@
+VALIDACION ESTATICA FUERA DE UNITY
+Escenas: 7
+PNG: 57 (45 aportados + 12 originales)
+MP3: 12
+Metas GUID unicos: 96
+C# : 13 archivos
+BAT: 9 archivos
+Fallos: []
+IMPORTANTE: NO SE PUDO COMPILAR NI EJECUTAR UNITY EN ESTE ENTORNO.
