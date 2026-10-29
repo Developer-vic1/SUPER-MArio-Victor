@@ -3,9 +3,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    private new Camera camera;
-    private new Rigidbody2D rigidbody;
-    private new Collider2D collider;
+    private Camera camera;
+    private Rigidbody2D rigidbody;
+    private Collider2D collider;
 
     private Vector2 velocity;
     private float inputAxis;
