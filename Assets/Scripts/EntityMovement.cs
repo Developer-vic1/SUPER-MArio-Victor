@@ -1,4 +1,6 @@
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -7,7 +9,7 @@ public class EntityMovement : MonoBehaviour
     public float speed = 1f;
     public Vector2 direction = Vector2.left;
 
-    private new Rigidbody2D rigidbody;
+    private Rigidbody2D rigidbody;
     private Vector2 velocity;
 
     private void Awake()

@@ -3,9 +3,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    private new Camera camera;
-    private new Rigidbody2D rigidbody;
-    private new Collider2D collider;
+    private Camera camera;
+    private Rigidbody2D rigidbody;
+    private Collider2D collider;
 
     private Vector2 velocity;
     private float inputAxis;
@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        rigidbody.isKinematic = false;
+        rigidbody.bodyType = RigidbodyType2D.Dynamic;
         collider.enabled = true;
         velocity = Vector2.zero;
         jumping = false;
@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDisable()
     {
-        rigidbody.isKinematic = true;
+        rigidbody.bodyType = RigidbodyType2D.Kinematic;
         collider.enabled = false;
         velocity = Vector2.zero;
         jumping = false;
@@ -75,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
     private void HorizontalMovement()
     {
         // accelerate / decelerate
-        inputAxis = Input.GetAxis("Horizontal");
+        inputAxis = MVKeys.Horizontal();
         velocity.x = Mathf.MoveTowards(velocity.x, inputAxis * moveSpeed, moveSpeed * Time.deltaTime);
 
         // check if running into a wall
@@ -98,8 +98,9 @@ public class PlayerMovement : MonoBehaviour
         jumping = velocity.y > 0f;
 
         // perform jump
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") || MVKeys.Pressed(KeyCode.Space))
         {
+            MVAudio.OneShot("mario-bros-salto", .45f);
             velocity.y = jumpForce;
             jumping = true;
         }
@@ -108,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyGravity()
     {
         // check if falling
-        bool falling = velocity.y < 0f || !Input.GetButton("Jump");
+        bool falling = velocity.y < 0f || !(Input.GetButton("Jump") || MVKeys.Held(KeyCode.Space));
         float multiplier = falling ? 2f : 1f;
 
         // apply gravity and terminal velocity

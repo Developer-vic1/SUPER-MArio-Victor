@@ -1,0 +1,10 @@
+{
+  "status": "completed",
+  "result": "Succeeded",
+  "platform": "StandaloneWindows64",
+  "bytes": 94599264,
+  "durationMs": 19209,
+  "errors": 0,
+  "warnings": 0,
+  "warningDetails": []
+}

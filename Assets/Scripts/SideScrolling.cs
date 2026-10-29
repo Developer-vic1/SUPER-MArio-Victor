@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class SideScrolling : MonoBehaviour
 {
-    private new Camera camera;
+    private Camera camera;
     private Transform player;
 
     public float height = 6.5f;
