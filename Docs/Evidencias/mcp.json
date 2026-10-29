@@ -1,0 +1,14 @@
+{
+  "initialized": true,
+  "tool_count": 169,
+  "tools_sample": [
+    "animation_animator_add_layer",
+    "animation_animator_add_parameter",
+    "animation_animator_add_state",
+    "animation_animator_add_transition",
+    "animation_animator_create_controller",
+    "animation_animator_get_controller",
+    "animation_clip_create",
+    "animation_clip_get"
+  ]
+}
