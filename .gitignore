@@ -11,6 +11,7 @@
 /[Uu]ser[Ss]ettings/
 /MarioVictor_VALIDACION.txt
 /MarioVictor_BUILD_RESULTADO.txt
+/.codex/
 /Assets/Resources/PerformanceTestRun*.json
 /Assets/Resources/PerformanceTestRun*.json.meta
 # The root Resources directory is created temporarily by the performance test package.
