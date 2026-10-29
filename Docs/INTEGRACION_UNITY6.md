@@ -28,9 +28,9 @@ Las pruebas automatizadas de navegación no sustituyen una partida completa de u
 
 ## MCP de este proyecto
 
-El paquete Unity Pipeline está fijado en `Packages/manifest.json`. El servidor de este proyecto está en `.codex/config.toml` (`unity-mario`) y `.vscode/mcp.json`. Ambos usan `Tools/MCP/Start-MarioMcp.ps1`, que calcula la ruta de Mario a partir de su propia carpeta. No depende de CAMPUS_GLITCH.
+El paquete Unity Pipeline está fijado en `Packages/manifest.json`. La configuración del servidor de este proyecto está en `.vscode/mcp.json` y usa `Tools/MCP/Start-MarioMcp.ps1`, que calcula la ruta de Mario a partir de su propia carpeta. No depende de CAMPUS_GLITCH.
 
-El lanzador prefiere la CLI local en `Logs/Tools/unity.exe`, cuando está disponible, y usa la CLI instalada en otras máquinas. Para utilizar el MCP, Unity debe estar abierto y haber terminado de compilar. Las conexiones nuevas de Codex cargarán la configuración local; un servidor ya conectado en otro chat conserva su configuración de inicio.
+El lanzador prefiere la CLI local en `Logs/Tools/unity.exe`, cuando está disponible, y usa la CLI instalada en otras máquinas. Para utilizar el MCP, Unity debe estar abierto y haber terminado de compilar. VS Code utiliza la configuración de `.vscode/mcp.json` al abrir esta carpeta de proyecto.
 
 ## GitFlow
 
